@@ -65,7 +65,7 @@
     </div>
 
     <script type="module">
-        import { db, auth, adminEmail, onAuthStateChanged, ref, get, set } from "./js/firebase-config.js";
+        import { db, auth, adminEmail, onAuthStateChanged, dbRef as ref, get, set } from "./js/firebase-config.js";
 
         // Pengecekan Akses Admin
         onAuthStateChanged(auth, (user) => {
