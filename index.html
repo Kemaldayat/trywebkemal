@@ -469,7 +469,7 @@
     </footer>
 
     <script type="module">
-        import { db, ref, get, child } from "./js/firebase-config.js";
+        import { db, dbRef as ref, get, child } from "./js/firebase-config.js";
 
         const antiBlokir = (url) => {
             if (!url) return '';
