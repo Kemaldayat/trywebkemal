@@ -155,3 +155,27 @@ button[type="submit"]:hover {
     header h1 { font-size: 1.5em; }
     .back-button { width: 100%; justify-content: center; } 
 }
+
+/* GLOBAL DARK MODE OVERRIDES */
+html.dark-mode {
+    --bg-color: #0f172a;
+    --container-bg: #1e293b;
+    --secondary-color: #0f172a;
+    --secondary-hover: #334155;
+    --text-color: #f8fafc;
+    --text-light: #94a3b8;
+    --border-color: #334155;
+}
+
+html.dark-mode body { background-color: var(--bg-color); color: var(--text-color); }
+html.dark-mode .sidebar, 
+html.dark-mode .topbar, 
+html.dark-mode .modal-content, 
+html.dark-mode .finance-card, 
+html.dark-mode .chart-card,
+html.dark-mode .settings-card,
+html.dark-mode table { 
+    background-color: var(--container-bg); 
+    border-color: var(--border-color);
+}
+html.dark-mode th { background-color: var(--bg-color); color: var(--text-light); }
