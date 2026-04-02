@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - Kemal Computer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login Admin</h1>
+        <form id="loginForm" class="login-form">
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Login</button>
+            <div id="errorMessage" style="display: none;"></div> 
+        </form>
+    </div>
+
+    <div id="customToast" class="success-toast">
+        <i class="fas fa-check-circle"></i> 
+        <span id="toastMessage"></span>
+    </div>
+
+    <script type="module">
+        import { auth, adminEmail, signInWithEmailAndPassword, signOut } from "./js/firebase-config.js";
+
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const customToast = document.getElementById('customToast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // Fungsi Native Pop-up (Menangani display 3 detik dan redirect)
+        function showToast(message) {
+            toastMessage.textContent = message;
+            customToast.classList.add('show');
+            
+            // Atur timer untuk menghilangkan pop-up dan melakukan redirect
+            setTimeout(() => {
+                customToast.classList.remove('show');
+                
+                // Lakukan redirect setelah transisi CSS selesai (0.5 detik)
+                setTimeout(() => {
+                     window.location.href = 'dashboard.html'; 
+                }, 500); 
+            }, 1000); // Tampilkan selama 1 detik
+        }
+        
+        // Fungsi Error 
+        function displayError(message) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMessageDiv.textContent = '';
+            errorMessageDiv.style.display = 'none';
+        }
+
+        // EVENT LISTENER LOGIKA UTAMA
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError(); 
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            if (!email || !password) {
+                 displayError("Email dan Password wajib diisi.");
+                 return;
+            }
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                if (user.email === adminEmail) {
+                    
+                    // --- AKTIVASI NATIVE POP-UP TENGAH ---
+                    showToast('Login berhasil! Mengarahkan ke Dashboard...');
+                    // ------------------------------------
+                } else {
+                    displayError("Email ini tidak memiliki izin akses admin.");
+                    await signOut(auth); 
+                }
+            } catch (error) {
+                console.error("Error logging in:", error);
+                
+                let errorMessage = "Login gagal. Periksa email dan password Anda.";
+                if (error.code === 'auth/wrong-password') {
+                    errorMessage = "Password salah.";
+                } else if (error.code === 'auth/user-not-found') {
+                    errorMessage = "Email tidak terdaftar.";
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = "Terlalu banyak percobaan login gagal. Coba lagi nanti.";
+                }
+                
+                displayError(errorMessage); 
+            }
+        });
+    </script>
+</body>
+</html>
